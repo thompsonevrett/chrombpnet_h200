@@ -4,7 +4,7 @@
 
 ## Installation
 
-This section will discuss the packages needed to train a ChromBPNet model. Firstly, it is recommended that you use a GPU for model training and have the necessary NVIDIA drivers and CUDA already installed. Secondly, on newer hardware (i.e. H200, RTX5000 ada, or newer), CUDA >= v12.0 and corresponding cuDNN is required to run the necessary Tensorflow version of **2.21.0**. I have confirmed that CUDA v12.xx and cuDNN v9.xx allows for GPU accelerated training. 
+This section will discuss the packages needed to train a ChromBPNet model. Firstly, it is recommended that you use a GPU for model training and have the necessary NVIDIA drivers and CUDA already installed. Secondly, on newer hardware (i.e. H200, RTX5000 ada, or newer), CUDA >= v12.0 and corresponding cuDNN is required to run the necessary **Tensorflow** version of **2.21.0**. I have confirmed that CUDA v12.xx and cuDNN v9.xx allows for GPU accelerated training. 
 
 ### 1. Clone the current repo
 ```
@@ -30,8 +30,19 @@ pip install -e .
 ```
 ## Optimizations Provided in this Repo
 ### 1. Updated Tensorflow to v2.21.0
-**Rationale:** Enable full compatibility with compute capability v9.0 Nvidia GPUs
+**Rationale:** Enable full compatibility with compute capability v9.0 Nvidia GPUs\
 **Key Changes:** Updated the minimum Python version to 3.10 and requirements.txt to include tensorflow==2.21.0 and tf-keras==2.21.0
+
+### 2. Implemented tf-keras v2.21.0
+**Rationale:** The Keras implementation packaged with Tensorflow created compatability issues with the newer version\
+**Key Changes:** Replaced legacy tensorflow.keras references with tf_keras to prevent errors.
+
+### 3. General speed-up optimizations
+**Rationale:** Reduce the amount of time required to train the bias and ChromBPNet models
+**Key Changes:**
+- Refactored filter_edge_regions and get_seqs_cts to replace Pandas .iterrows() with fast column zip-unpacking loops, significantly reducing startup/loading overhead.
+- Added the workers=4 parameter to model.fit() to allow multi-threaded background queue prefetching. This keeps the GPU fully occupied and prevents idle states between epochs.
+- Refactored predict_on_batch_wrapper to run predictions in bulk using model.predict on test_generator.cur_seqs instead of batch-by-batch iteration calling model.predict_on_batch(X).
 
 ## How to Cite
 
