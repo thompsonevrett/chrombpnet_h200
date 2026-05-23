@@ -38,7 +38,7 @@ pip install -e .
 **Key Changes:** Replaced legacy tensorflow.keras references with tf_keras to prevent errors.
 
 ### 3. General speed-up optimizations
-**Rationale:** Reduce the amount of time required to train the bias and ChromBPNet models
+**Rationale:** Reduce the amount of time required to train the bias and ChromBPNet models\
 **Key Changes:**
 - Refactored filter_edge_regions and get_seqs_cts to replace Pandas .iterrows() with fast column zip-unpacking loops, significantly reducing startup/loading overhead.
 - Added the workers=4 parameter to model.fit() to allow multi-threaded background queue prefetching. This keeps the GPU fully occupied and prevents idle states between epochs.
