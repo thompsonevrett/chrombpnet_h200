@@ -1,6 +1,15 @@
+import numpy as np
+import warnings
+# Monkeypatch deprecated numpy aliases for compatibility with older libraries like deepdish
+with warnings.catch_warnings():
+    warnings.simplefilter("ignore", category=FutureWarning)
+    warnings.simplefilter("ignore", category=DeprecationWarning)
+    for alias, builtin_type in [("object", object), ("bool", bool), ("int", int), ("float", float)]:
+        if not hasattr(np, alias):
+            setattr(np, alias, builtin_type)
+
 import argparse
 import pyBigWig
-import numpy as np
 import deepdish
 import chrombpnet.evaluation.make_bigwigs.bigwig_helper as bigwig_helper
 

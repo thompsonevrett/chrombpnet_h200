@@ -1,11 +1,70 @@
 # Adapted from chrombpnet-lite
 
+import numpy as np
+import warnings
+# Monkeypatch deprecated numpy aliases for compatibility with older libraries like deepdish
+with warnings.catch_warnings():
+    warnings.simplefilter("ignore", category=FutureWarning)
+    warnings.simplefilter("ignore", category=DeprecationWarning)
+    for alias, builtin_type in [("object", object), ("bool", bool), ("int", int), ("float", float)]:
+        if not hasattr(np, alias):
+            setattr(np, alias, builtin_type)
+
 import deepdish as dd
 import json
-import numpy as np
 import tensorflow as tf
-import pandas as pd
+
+# Import shap first, which will load tensorflow and keras/tf_keras backend modules
 import shap
+try:
+    from shap.explainers.deep import TFDeepExplainer
+except ImportError as e:
+    raise ImportError(
+        "Could not import 'shap.explainers.deep.TFDeepExplainer'. "
+        "It seems you have the standard 'shap' library installed instead of the required 'kundajelab-shap' fork. "
+        "Please run: 'pip uninstall shap' followed by 'pip install kundajelab-shap==1' to resolve this."
+    ) from e
+
+# Monkeypatch tf.compat.v1.keras.backend.get_session to resolve AttributeError in older shap versions under Keras 3 / tf-keras
+if hasattr(tf, "compat") and hasattr(tf.compat, "v1"):
+    _session_cache = {}
+    def get_session(*args, **kwargs):
+        session = tf.compat.v1.get_default_session()
+        if session is None:
+            if "session" not in _session_cache:
+                _session_cache["session"] = tf.compat.v1.Session()
+            session = _session_cache["session"]
+        return session
+
+    # 1. Patch the modules that are already loaded in sys.modules
+    import sys
+    for name, module in list(sys.modules.items()):
+        if "keras" in name and "backend" in name:
+            try:
+                setattr(module, "get_session", get_session)
+            except Exception:
+                pass
+
+    # 2. Patch via tf.compat.v1.keras.backend directly
+    try:
+        tf.compat.v1.keras.backend.get_session = get_session
+    except Exception:
+        pass
+
+    # 3. Patch via keras/tf_keras if they can be imported
+    try:
+        import keras
+        keras.backend.get_session = get_session
+    except Exception:
+        pass
+    try:
+        import tf_keras
+        tf_keras.backend.get_session = get_session
+    except Exception:
+        pass
+
+import pandas as pd
+
 import pyfaidx
 import shutil
 import errno
@@ -59,7 +118,7 @@ def interpret(model, seqs, output_prefix, profile_or_counts):
     counts_input = seqs
 
     if "counts" in profile_or_counts:
-        profile_model_counts_explainer = shap.explainers.deep.TFDeepExplainer(
+        profile_model_counts_explainer = TFDeepExplainer(
             (counts_model_input, tf.reduce_sum(model.outputs[1], axis=-1)),
             shap_utils.shuffle_several_times,
             combine_mult_and_diffref=shap_utils.combine_mult_and_diffref)
@@ -80,7 +139,7 @@ def interpret(model, seqs, output_prefix, profile_or_counts):
 
     if "profile" in profile_or_counts:
         weightedsum_meannormed_logits = shap_utils.get_weightedsum_meannormed_logits(model)
-        profile_model_profile_explainer = shap.explainers.deep.TFDeepExplainer(
+        profile_model_profile_explainer = TFDeepExplainer(
             (profile_model_input, weightedsum_meannormed_logits),
             shap_utils.shuffle_several_times,
             combine_mult_and_diffref=shap_utils.combine_mult_and_diffref)

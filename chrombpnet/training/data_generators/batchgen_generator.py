@@ -1,4 +1,4 @@
-from tensorflow import keras
+import tf_keras as keras
 from chrombpnet.training.utils import augment
 from chrombpnet.training.utils import data_utils
 import tensorflow as tf
@@ -108,4 +108,3 @@ class ChromBPNetBatchGenerator(keras.utils.Sequence):
 
     def on_epoch_end(self):
         self.crop_revcomp_data()
-

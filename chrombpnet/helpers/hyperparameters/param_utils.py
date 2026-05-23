@@ -1,8 +1,9 @@
 import numpy as np
 import chrombpnet.training.utils.one_hot as one_hot
 import tensorflow as tf
-from tensorflow.keras.utils import get_custom_objects
-from tensorflow.keras.models import load_model
+from tf_keras.utils import get_custom_objects
+from tf_keras.models import load_model
+
 import chrombpnet.training.utils.losses as losses
 
 def filter_edge_regions(peaks_df, bw, width, peaks_bool):
@@ -20,8 +21,11 @@ def filter_edge_regions(peaks_df, bw, width, peaks_bool):
     # right edge case
     chrom_to_sizes = bw.chroms()
     filtered = []
-    for i, r in peaks_df.iterrows():
-        if r['start'] + r['summit'] + width//2 > chrom_to_sizes.get(r['chr'], 0) :
+    chrs = peaks_df['chr'].values
+    starts = peaks_df['start'].values
+    summits = peaks_df['summit'].values
+    for chrom, start, summit in zip(chrs, starts, summits):
+        if start + summit + width//2 > chrom_to_sizes.get(chrom, 0) :
             filtered.append(True)
         else:
             filtered.append(False)
@@ -46,12 +50,15 @@ def get_seqs_cts(genome, bw, peaks_df, input_width=2114, output_width=1000):
     """
     vals = []
     seqs = []
-    for i, r in peaks_df.iterrows():
-        sequence = str(genome[r['chr']][(r['start']+r['summit'] - input_width//2):(r['start'] + r['summit'] + input_width//2)])
+    chrs = peaks_df['chr'].values
+    starts = peaks_df['start'].values
+    summits = peaks_df['summit'].values
+    for chrom, start, summit in zip(chrs, starts, summits):
+        sequence = str(genome[chrom][(start + summit - input_width//2):(start + summit + input_width//2)])
         seqs.append(sequence)
-        bigwig_vals=np.nan_to_num(bw.values(r['chr'], 
-                            (r['start'] + r['summit']) - output_width//2,
-                            (r['start'] + r['summit']) + output_width//2))
+        bigwig_vals=np.nan_to_num(bw.values(chrom, 
+                            (start + summit) - output_width//2,
+                            (start + summit) + output_width//2))
         vals.append(bigwig_vals)
     return (np.sum(np.array(vals),axis=1), one_hot.dna_to_one_hot(seqs))
 

@@ -1,6 +1,15 @@
+import numpy as np
+import warnings
+# Monkeypatch deprecated numpy aliases for compatibility with older libraries like deepdish
+with warnings.catch_warnings():
+    warnings.simplefilter("ignore", category=FutureWarning)
+    warnings.simplefilter("ignore", category=DeprecationWarning)
+    for alias, builtin_type in [("object", object), ("bool", bool), ("int", int), ("float", float)]:
+        if not hasattr(np, alias):
+            setattr(np, alias, builtin_type)
+
 import pyBigWig
 import pandas as pd
-import numpy as np
 import deepdish as dd
 import os
 import pyfaidx
@@ -15,9 +24,8 @@ import json
 import chrombpnet.training.utils.losses as losses
 from chrombpnet.training.utils.data_utils import get_seq as get_seq
 import chrombpnet.training.utils.one_hot as one_hot
-from tensorflow.keras.utils import get_custom_objects
-from tensorflow.keras.models import load_model
-
+from tf_keras.utils import get_custom_objects
+from tf_keras.models import load_model
 
 NARROWPEAK_SCHEMA = ["chr", "start", "end", "1", "2", "3", "4", "5", "6", "summit"]
 PWM_SCHEMA = ["MOTIF_NAME", "MOTIF_PWM_FWD"]

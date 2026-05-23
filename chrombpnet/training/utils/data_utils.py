@@ -10,9 +10,12 @@ def get_seq(peaks_df, genome, width):
     Same as get_cts, but fetches sequence from a given genome.
     """
     vals = []
+    chrs = peaks_df['chr'].values
+    starts = peaks_df['start'].values
+    summits = peaks_df['summit'].values
 
-    for i, r in peaks_df.iterrows():
-        sequence = str(genome[r['chr']][(r['start']+r['summit'] - width//2):(r['start'] + r['summit'] + width//2)])
+    for chrom, start, summit in zip(chrs, starts, summits):
+        sequence = str(genome[chrom][(start+summit - width//2):(start + summit + width//2)])
         vals.append(sequence)
 
     return one_hot.dna_to_one_hot(vals)
@@ -27,10 +30,14 @@ def get_cts(peaks_df, bw, width):
     "cts" = per base counts across a region
     """
     vals = []
-    for i, r in peaks_df.iterrows():
-        vals.append(np.nan_to_num(bw.values(r['chr'], 
-                                            r['start'] + r['summit'] - width//2,
-                                            r['start'] + r['summit'] + width//2)))
+    chrs = peaks_df['chr'].values
+    starts = peaks_df['start'].values
+    summits = peaks_df['summit'].values
+
+    for chrom, start, summit in zip(chrs, starts, summits):
+        vals.append(np.nan_to_num(bw.values(chrom, 
+                                            start + summit - width//2,
+                                            start + summit + width//2)))
         
     return np.array(vals)
 
@@ -40,16 +47,39 @@ def get_coords(peaks_df, peaks_bool):
     returns a list of tuples with (chrom, summit)
     """
     vals = []
-    for i, r in peaks_df.iterrows():
-        vals.append([r['chr'], r['start']+r['summit'], "f", peaks_bool])
+    chrs = peaks_df['chr'].values
+    starts = peaks_df['start'].values
+    summits = peaks_df['summit'].values
+
+    for chrom, start, summit in zip(chrs, starts, summits):
+        vals.append([chrom, start+summit, "f", peaks_bool])
 
     return np.array(vals)
 
 def get_seq_cts_coords(peaks_df, genome, bw, input_width, output_width, peaks_bool):
-
-    seq = get_seq(peaks_df, genome, input_width)
-    cts = get_cts(peaks_df, bw, output_width)
-    coords = get_coords(peaks_df, peaks_bool)
+    seq_vals = []
+    cts_vals = []
+    coords_vals = []
+    
+    chrs = peaks_df['chr'].values
+    starts = peaks_df['start'].values
+    summits = peaks_df['summit'].values
+    
+    for chrom, start, summit in zip(chrs, starts, summits):
+        # 1. Get sequence
+        seq_vals.append(str(genome[chrom][(start + summit - input_width // 2):(start + summit + input_width // 2)]))
+        
+        # 2. Get counts
+        cts_vals.append(np.nan_to_num(bw.values(chrom, 
+                                                start + summit - output_width // 2,
+                                                start + summit + output_width // 2)))
+        
+        # 3. Get coords
+        coords_vals.append([chrom, start + summit, "f", peaks_bool])
+        
+    seq = one_hot.dna_to_one_hot(seq_vals)
+    cts = np.array(cts_vals)
+    coords = np.array(coords_vals)
     return seq, cts, coords
 
 def load_data(bed_regions, nonpeak_regions, genome_fasta, cts_bw_file, inputlen, outputlen, max_jitter):

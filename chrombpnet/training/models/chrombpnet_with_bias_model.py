@@ -1,8 +1,8 @@
 import numpy as np ;
-from tensorflow.keras.backend import int_shape
-from tensorflow.keras.layers import Input, Cropping1D, add, Conv1D, GlobalAvgPool1D, Dense, Add, Concatenate, Lambda, Flatten
-from tensorflow.keras.optimizers import Adam
-from tensorflow.keras.models import Model
+from tf_keras.backend import int_shape
+from tf_keras.layers import Input, Cropping1D, add, Conv1D, GlobalAvgPool1D, Dense, Add, Concatenate, Lambda, Flatten
+from tf_keras.optimizers import Adam
+from tf_keras.models import Model
 from chrombpnet.training.utils.losses import multinomial_nll
 import tensorflow as tf
 import random as rn
@@ -12,8 +12,8 @@ os.environ['PYTHONHASHSEED'] = '0'
 
 
 def load_pretrained_bias(model_hdf5):
-    from tensorflow.keras.models import load_model
-    from tensorflow.keras.utils import get_custom_objects
+    from tf_keras.models import load_model
+    from tf_keras.utils import get_custom_objects
     custom_objects={"multinomial_nll":multinomial_nll, "tf":tf}    
     get_custom_objects().update(custom_objects)
     pretrained_bias_model=load_model(model_hdf5)

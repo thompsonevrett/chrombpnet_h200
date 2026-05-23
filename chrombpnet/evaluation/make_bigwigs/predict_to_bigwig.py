@@ -3,8 +3,9 @@ import pyBigWig
 import numpy as np
 import pandas as pd
 import pyfaidx
-from tensorflow.keras.utils import get_custom_objects
-from tensorflow.keras.models import load_model
+from tf_keras.utils import get_custom_objects
+from tf_keras.models import load_model
+
 import tensorflow as tf
 import chrombpnet.evaluation.make_bigwigs.bigwig_helper as bigwig_helper
 import chrombpnet.training.utils.losses as losses

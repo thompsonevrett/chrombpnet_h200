@@ -1,10 +1,10 @@
-from tensorflow.keras.models import load_model
-from tensorflow.keras.utils import get_custom_objects
+from tf_keras.models import load_model
+from tf_keras.utils import get_custom_objects
 import argparse
 import tensorflow as tf
 import numpy as np
-from tensorflow.keras.models import Model
-from tensorflow.keras.layers import Input, Cropping1D, add, Conv1D, GlobalAvgPool1D, Dense, Add, Concatenate, Lambda, Flatten
+from tf_keras.models import Model
+from tf_keras.layers import Input, Cropping1D, add, Conv1D, GlobalAvgPool1D, Dense, Add, Concatenate, Lambda, Flatten
 import time
 import os
 import argparse

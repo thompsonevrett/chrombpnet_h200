@@ -5,7 +5,7 @@ import pandas as pd
 import numpy as np
 import os
 from chrombpnet.helpers.hyperparameters import param_utils as param_utils
-from tensorflow import keras
+import tf_keras as keras
 import json
 
 def parse_data_args():

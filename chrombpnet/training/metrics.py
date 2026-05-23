@@ -35,7 +35,6 @@ def counts_metrics(labels,preds,outf,title):
                     xlab='Log Count Labels',
                     ylab='Log Count Predictions')
     plt.suptitle(title+" count: spearman R="+str(round(spearman_cor,3))+", Pearson R="+str(round(pearson_cor,3))+", mse="+str(round(mse,3)))
-    plt.legend(loc='best')
     plt.savefig(outf+'.counts_pearsonr.png',format='png',dpi=300)
     
     return spearman_cor, pearson_cor, mse
@@ -65,7 +64,13 @@ def profile_metrics(true_counts,pred_probs,pseudocount=0.001):
         #mnll_norm.append(curr_mnll_norm)
 
         # jsd
-        cur_jsd=jensenshannon(true_counts[idx,:]/(pseudocount+np.nansum(true_counts[idx,:])),pred_probs[idx,:])
+        true_counts_sum = np.nansum(true_counts[idx,:])
+        if true_counts_sum == 0:
+            true_prob = np.ones(true_counts.shape[1]) / true_counts.shape[1]
+        else:
+            true_prob = true_counts[idx,:] / true_counts_sum
+
+        cur_jsd=jensenshannon(true_prob,pred_probs[idx,:])
         jsd_pw.append(cur_jsd)
         # normalized jsd
         min_jsd, max_jsd = jsd_min_max_bounds(true_counts[idx,:])
@@ -74,7 +79,10 @@ def profile_metrics(true_counts,pred_probs,pseudocount=0.001):
 
         # get random shuffling on labels for a worst case performance on metrics - labels versus shuffled labels
         shuffled_labels=np.random.permutation(true_counts[idx,:])
-        shuffled_labels_prob=shuffled_labels/(pseudocount+np.nansum(shuffled_labels))
+        if true_counts_sum == 0:
+            shuffled_labels_prob = np.ones(len(shuffled_labels)) / len(shuffled_labels)
+        else:
+            shuffled_labels_prob = shuffled_labels/true_counts_sum
 
         # mnll random
         #curr_rnd_mnll = mnll(true_counts[idx,:],  probs=shuffled_labels_prob)
@@ -84,7 +92,7 @@ def profile_metrics(true_counts,pred_probs,pseudocount=0.001):
         #mnll_rnd_norm.append(curr_rnd_mnll_norm)   
 
         # jsd random
-        curr_jsd_rnd=jensenshannon(true_counts[idx,:]/(pseudocount+np.nansum(true_counts[idx,:])),shuffled_labels_prob)
+        curr_jsd_rnd=jensenshannon(true_prob,shuffled_labels_prob)
         jsd_rnd.append(curr_jsd_rnd)
         # normalized jsd random
         curr_rnd_jsd_norm = get_min_max_normalized_value(curr_jsd_rnd, min_jsd, max_jsd)

@@ -1,8 +1,8 @@
 import numpy as np ;
-from tensorflow.keras.backend import int_shape
-from tensorflow.keras.layers import Input, Cropping1D, add, Conv1D, GlobalAvgPool1D, Dense, Flatten
-from tensorflow.keras.optimizers import Adam
-from tensorflow.keras.models import Model
+from tf_keras.backend import int_shape
+from tf_keras.layers import Input, Cropping1D, add, Conv1D, GlobalAvgPool1D, Dense, Flatten
+from tf_keras.optimizers import Adam
+from tf_keras.models import Model
 from chrombpnet.training.utils.losses import multinomial_nll
 import tensorflow as tf
 import random as rn

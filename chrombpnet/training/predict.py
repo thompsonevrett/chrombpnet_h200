@@ -9,8 +9,9 @@ import chrombpnet.training.utils.argmanager as argmanager
 import chrombpnet.training.utils.losses as losses
 import chrombpnet.training.metrics as metrics
 import chrombpnet.training.data_generators.initializers as initializers
-from tensorflow.keras.utils import get_custom_objects
-from tensorflow.keras.models import load_model
+from tf_keras.utils import get_custom_objects
+from tf_keras.models import load_model
+
 #from scipy import nanmean, nanstd
 
 def write_predictions_h5py(output_prefix, profile, logcts, coords):
@@ -65,32 +66,46 @@ def softmax(x, temp=1):
     return np.exp(temp*norm_x)/np.sum(np.exp(temp*norm_x), axis=1, keepdims=True)
 
 def predict_on_batch_wrapper(model,test_generator):
-    num_batches=len(test_generator)
-    profile_probs_predictions = []
-    true_counts = []
-    counts_sum_predictions = []
-    true_counts_sum = []
-    coordinates = []
-
-    for idx in range(num_batches):
-        if idx%100==0:
-            print(str(idx)+'/'+str(num_batches))
+    if hasattr(test_generator, 'cur_seqs'):
+        print("Running prediction in bulk using model.predict...")
+        X = test_generator.cur_seqs
+        # Bulk predict all examples
+        preds = model.predict(X, batch_size=test_generator.batch_size, verbose=1)
         
-        X,y,coords=test_generator[idx]
+        profile_probs_predictions = softmax(preds[0])
+        true_counts = test_generator.cur_cts
+        counts_sum_predictions = preds[1][:, 0]
+        true_counts_sum = np.log(1 + test_generator.cur_cts.sum(axis=-1))
+        coordinates = test_generator.cur_coords
+        
+        return np.array(true_counts), np.array(profile_probs_predictions), np.array(true_counts_sum), np.array(counts_sum_predictions), np.array(coordinates)
+    else:
+        num_batches=len(test_generator)
+        profile_probs_predictions = []
+        true_counts = []
+        counts_sum_predictions = []
+        true_counts_sum = []
+        coordinates = []
 
-        #get the model predictions            
-        preds=model.predict_on_batch(X)
+        for idx in range(num_batches):
+            if idx%100==0:
+                print(str(idx)+'/'+str(num_batches))
+            
+            X,y,coords=test_generator[idx]
 
-        # get counts predictions
-        true_counts.extend(y[0])
-        profile_probs_predictions.extend(softmax(preds[0]))
+            #get the model predictions            
+            preds=model.predict_on_batch(X)
 
-        # get profile predictions
-        true_counts_sum.extend(y[1][:,0])
-        counts_sum_predictions.extend(preds[1][:,0])
-        coordinates.extend(coords)
+            # get counts predictions
+            true_counts.extend(y[0])
+            profile_probs_predictions.extend(softmax(preds[0]))
 
-    return np.array(true_counts), np.array(profile_probs_predictions), np.array(true_counts_sum), np.array(counts_sum_predictions), np.array(coordinates)
+            # get profile predictions
+            true_counts_sum.extend(y[1][:,0])
+            counts_sum_predictions.extend(preds[1][:,0])
+            coordinates.extend(coords)
+
+        return np.array(true_counts), np.array(profile_probs_predictions), np.array(true_counts_sum), np.array(counts_sum_predictions), np.array(coordinates)
 
 
 def main(args):

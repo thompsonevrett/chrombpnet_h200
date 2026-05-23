@@ -6,9 +6,8 @@ import tensorflow as tf
 import numpy as np
 import chrombpnet.training.utils.losses as losses
 from chrombpnet.training.utils.data_utils import one_hot
-from tensorflow.keras.utils import get_custom_objects
-from tensorflow.keras.models import load_model
-
+from tf_keras.utils import get_custom_objects
+from tf_keras.models import load_model
 
 def get_seq(peaks_df, genome, width):
     """

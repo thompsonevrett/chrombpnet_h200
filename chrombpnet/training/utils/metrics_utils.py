@@ -151,7 +151,11 @@ def mnll_min_max_bounds(profile):
     profile = profile.astype(np.float64)
     
     # profile as probabilities
-    profile_prob = profile / np.sum(profile)
+    profile_sum = np.sum(profile)
+    if profile_sum == 0:
+        profile_prob = np.ones(len(profile)) / len(profile)
+    else:
+        profile_prob = profile / profile_sum
     
     # the scipy.stats.multinomial function is very sensitive to 
     # profile_prob summing to exactly 1.0, if not you get NaN as the
@@ -193,7 +197,11 @@ def jsd_min_max_bounds(profile):
     uniform_profile = np.ones(len(profile)) * (1.0 / len(profile))
 
     # profile as probabilities
-    profile_prob = profile / np.sum(profile)
+    profile_sum = np.sum(profile)
+    if profile_sum == 0:
+        profile_prob = np.ones(len(profile)) / len(profile)
+    else:
+        profile_prob = profile / profile_sum
 
     # jsd of profile with uniform profile
     max_jsd = jensenshannon(profile_prob, uniform_profile)

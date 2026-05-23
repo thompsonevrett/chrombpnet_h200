@@ -1,5 +1,15 @@
 # adapted from mtbatchgen by Zahoor
 
+import numpy as np
+import warnings
+# Monkeypatch deprecated numpy aliases for compatibility with older libraries like deepdish
+with warnings.catch_warnings():
+    warnings.simplefilter("ignore", category=FutureWarning)
+    warnings.simplefilter("ignore", category=DeprecationWarning)
+    for alias, builtin_type in [("object", object), ("bool", bool), ("int", int), ("float", float)]:
+        if not hasattr(np, alias):
+            setattr(np, alias, builtin_type)
+
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
@@ -8,7 +18,6 @@ from collections import OrderedDict
 import modisco.visualization
 import deepdish
 import h5py
-import numpy as np
 import modisco
 import argparse
 import os

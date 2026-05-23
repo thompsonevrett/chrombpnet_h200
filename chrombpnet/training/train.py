@@ -1,6 +1,6 @@
 from __future__ import division, print_function, absolute_import
 import importlib.machinery
-import tensorflow.keras.callbacks as tfcallbacks 
+import tf_keras.callbacks as tfcallbacks 
 import chrombpnet.training.utils.argmanager as argmanager
 import chrombpnet.training.utils.losses as losses
 import chrombpnet.training.utils.callbacks as callbacks
@@ -40,7 +40,8 @@ def fit_and_evaluate(model,train_gen,valid_gen,args,architecture_module):
               validation_data=valid_gen,
               epochs=args.epochs,
               verbose=1,
-              callbacks=cur_callbacks)
+              callbacks=cur_callbacks,
+              workers=4)
 
     print('save model') 
     model.save(model_output_path_h5_name)
