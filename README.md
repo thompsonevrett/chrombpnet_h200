@@ -25,193 +25,28 @@ ChromBPNet (shown in the image as `Bias-Factorized ChromBPNet`) is a fully convo
 
 This section will discuss the packages needed to train a ChromBPNet model. Firstly, it is recommended that you use a GPU for model training and have the necessary NVIDIA drivers and CUDA already installed. You can verify that your machine is set up to use GPU's properly by executing the `nvidia-smi` command and ensuring that the command returns information about your system GPU(s) (rather than an error). Secondly there are two ways to ensure you have the necessary packages to train ChromBPNet models which we detail below,
 
-### 1. Running in docker 
-
-Download and install the latest version of Docker for your platform. Here is the link for the installers -<a href="https://docs.docker.com/get-docker/">Docker Installers</a>.  Run the docker run command below to open an environment with all the packages installed and do `cd chrombpnet` to start running the tutorial.
-
-> **Note:**
-> To access your system GPU's from within the docker container, you must have [NVIDIA Container Toolkit](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html) installed on your host machine.
-
+### 1. Clone the current repo
 ```
-docker run -it --rm --memory=100g --gpus device=0  kundajelab/chrombpnet:latest
+git clone https://github.com/thompsonevrett/chrombpnet_h200.git
 ```
 
-### 2. Local installation
+### 2. Environment setup
 
-Create a clean conda environment with python >=3.8 
+Create a clean conda environment with python 3.10 
 ```
-conda create -n chrombpnet python=3.8
-conda activate chrombpnet
+conda create -n chrombpnet-h100-env python=3.10
+conda activate chrombpnet-h100-env
 ```
 
 Install non-Python  requirements via conda
 ```
 conda install -y -c conda-forge -c bioconda samtools bedtools ucsc-bedgraphtobigwig pybigwig meme
 ```
-#### Install from pypi 
+### 3. Install ChromBPNet 
 
 ```
-pip install chrombpnet
+pip install -e .
 ```
-#### Install from source
-```
-git clone https://github.com/kundajelab/chrombpnet.git
-pip install -e chrombpnet
-```
-
-## QuickStart
-
-### Bias-factorized ChromBPNet training
-
-The command to train ChromBPNet with pre-trained bias model will look like this:
-
-```
-chrombpnet pipeline \
-  -ibam /path/to/input.bam \ # only one of ibam, ifrag or itag is accepted
-  -ifrag /path/to/input.tsv \ # only one of ibam, ifrag or itag is accepted
-  -itag /path/to/input.tagAlign \ # only one of ibam, ifrag or itag is accepted
-  -d "ATAC" \
-  -g /path/to/hg38.fa \
-  -c /path/to/hg38.chrom.sizes \ 
-  -p /path/to/peaks.bed \
-  -n /path/to/nonpeaks.bed \
-  -fl /path/to/fold_0.json \
-  -b /path/to/bias.h5 \ 
-  -o path/to/output/dir/ \
-```
-
-#### Input Format
-
-- `-ibam` or `-ifrag` or `-itag`: input file path with filtered reads in one of bam, fragment or tagalign formats. Example files for supported types - [bam](https://storage.googleapis.com/chrombpnet_data/input_files/ENCSR868FGK_merged.bam), [fragment](https://storage.googleapis.com/chrombpnet_data/input_files/example.fragments.tsv), [tagalign](https://storage.googleapis.com/chrombpnet_data/input_files/example.tagAlign) 
-- `-d`: assay type. The following types are supported - "ATAC" or "DNASE"
-- `-g`: reference genome fasta file. Example file human reference - [hg38.fa](https://storage.googleapis.com/chrombpnet_data/input_files/hg38.genome.fa)
-- `-c`: chromosome and size tab separated file. Example file in human reference - [hg38.chrom.sizes](https://storage.googleapis.com/chrombpnet_data/input_files/hg38.chrom.sizes)
-- `-p`: Input peaks in narrowPeak file format, and must have 10 columns, with values minimally for chr, start, end and summit (10th column). Every region 	  is centered at start + summit internally, across all regions. Example file with [ENCSR868FGK](https://www.encodeproject.org/experiments/ENCSR868FGK/) dataset - [peaks.bed](https://storage.googleapis.com/chrombpnet_data/input_files/ENCSR868FGK_relaxed_peaks_no_blacklist.bed)
-- `-n`: Input nonpeaks (background regions)in narrowPeak file format, and must have 10 columns, with values minimally for chr, start, end and summit 	  	(10th column). Every region is centered at start + summit internally, across all regions. Example file with [ENCSR868FGK](https://www.encodeproject.org/experiments/ENCSR868FGK/) dataset - [nonpeaks.bed](https://storage.googleapis.com/chrombpnet_data/input_files/ENCSR868FGK_nonpeaks_no_blacklist.bed). More instructions on how to make your own nonpeak file can be found in the [Preprocessing](https://github.com/kundajelab/chrombpnet/wiki/Preprocessing#generate-non-peaks-background-regions) guide.
-- `-fl`: json file showing split of chromosomes for train, test and valid. Example 5 fold jsons for human reference -  [folds](https://zenodo.org/records/7443683/files/folds.zip?download=1) 
-- `-b`: Bias model in `.h5` format. Bias models are generally transferable across  assay types following similar protocol. Repository of pre-trained bias models for use [here](https://zenodo.org/records/7443683/files/bias_models.zip?download=1). Instructions to train custom bias model below.
-- `-o`: Output directory path
-
-Please find scripts and best practices for preprocssing [here](https://github.com/kundajelab/chrombpnet/wiki/Preprocessing).
-
-#### Output Format
-
-The ouput directory will be populated as follows -
-
-```
-models\
-	bias_model_scaled.h5
-	chrombpnet.h5
-	chrombpnet_nobias.h5 (TF-Model i.e model to predict bias corrected accessibility profile) 
-logs\
-	chrombpnet.log (loss per epoch)
-	chrombpnet.log.batch (loss per batch per epoch)
-	(..other hyperparameters used in training)
-	
-auxilary\
-	filtered.peaks
-	filtered.nonpeaks
-	...
-
-evaluation\
-	overall_report.pdf
-	overall_report.html
-	bw_shift_qc.png 
-	bias_metrics.json 
-	chrombpnet_metrics.json
-	chrombpnet_only_peaks.counts_pearsonr.png
-	chrombpnet_only_peaks.profile_jsd.png
-	chrombpnet_nobias_profile_motifs.pdf
-	chrombpnet_nobias_counts_motifs.pdf
-	chrombpnet_nobias_max_bias_response.txt
-	chrombpnet_nobias.....footprint.png
-	...
-```
-Detailed usage guide with more information on input arguments and the output file formats and how to work with them are provided [here](https://github.com/kundajelab/chrombpnet/wiki/ChromBPNet-training) and [here](https://github.com/kundajelab/chrombpnet/wiki/Output-format).
-
-For more information, also see:
-
-- [Full documentation list](https://github.com/kundajelab/chrombpnet/wiki)
-- [Detailed list of input arguments](https://github.com/kundajelab/chrombpnet/wiki/ChromBPNet-training)
-- [Detailed usage guide with more information on the output file formats and how to work with them](https://github.com/kundajelab/chrombpnet/wiki/Output-format)
-- [Best practices for preprocessing](https://github.com/kundajelab/chrombpnet/wiki/Preprocessing)
-- [Training tutorial](https://github.com/kundajelab/chrombpnet/wiki/Tutorial)
-- [Frequently Asked Questions, FAQ](https://github.com/kundajelab/chrombpnet/wiki/FAQ)
- 
-## Bias Model training
-
-The command to train a custom bias bias model will look like this:
-
-```
-chrombpnet bias pipeline \
-  -ibam /path/to/input.bam \ # only one of ibam, ifrag or itag is accepted
-  -ifrag /path/to/input.tsv \ # only one of ibam, ifrag or itag is accepted
-  -itag /path/to/input.tagAlign \ # only one of ibam, ifrag or itag is accepted
-  -d "ATAC" \
-  -g /path/to/hg38.fa \
-  -c /path/to/hg38.chrom.sizes \ 
-  -p /path/to/peaks.bed \
-  -n /path/to/nonpeaks.bed \
-  -fl /path/to/fold_0.json \
-  -b 0.5 \ 
-  -o path/to/output/dir/ \
-```
-
-#### Input Format
-
-- `-ibam` or `-ifrag` or `-itag`: input file path with filtered reads in one of bam, fragment or tagalign formats. Example files for supported types - [bam](https://storage.googleapis.com/chrombpnet_data/input_files/ENCSR868FGK_merged.bam), [fragment](https://storage.googleapis.com/chrombpnet_data/input_files/example.fragments.tsv), [tagalign](https://storage.googleapis.com/chrombpnet_data/input_files/example.tagAlign) 
-- `-d`: assay type.  Following types are supported - "ATAC" or "DNASE"
-- `-g`: reference genome fasta file. Example file human reference - [hg38.fa](https://storage.googleapis.com/chrombpnet_data/input_files/hg38.genome.fa)
-- `-c`: chromosome and size tab separated file. Example file in human reference - [hg38.chrom.sizes](https://storage.googleapis.com/chrombpnet_data/input_files/hg38.chrom.sizes)
-- `-p`: Input peaks in narrowPeak file format, and must have 10 columns, with values minimally for chr, start, end and summit (10th column). Every region 	  is centered at start + summit internally, across all regions. Example file with [ENCSR868FGK](https://www.encodeproject.org/experiments/ENCSR868FGK/) dataset - [peaks.bed](https://storage.googleapis.com/chrombpnet_data/input_files/ENCSR868FGK_relaxed_peaks_no_blacklist.bed)
-- `-n`: Input nonpeaks (background regions)in narrowPeak file format, and must have 10 columns, with values minimally for chr, start, end and summit 	  	(10th column). Every region is centered at start + summit internally, across all regions. Example file with [ENCSR868FGK](https://www.encodeproject.org/experiments/ENCSR868FGK/) dataset - [nonpeaks.bed](https://storage.googleapis.com/chrombpnet_data/input_files/ENCSR868FGK_nonpeaks_no_blacklist.bed)
-- `-f`: json file showing split of chromosomes for train, test and valid. Example 5 fold jsons for human reference -  [folds](https://zenodo.org/records/7443683/files/folds.zip?download=1) 
-- `-o`: Output directory path
-
-Please find scripts and best practices for preprocessing [here](https://github.com/kundajelab/chrombpnet/wiki/Preprocessing).
-
-#### Output Format
-
-The output directory will be populated as follows -
-
-
-```
-models\
-	bias.h5
-logs\
-	bias.log (loss per epoch)
-	bias.log.batch (loss per batch per epoch)
-	(..other hyperparameters used in training)
-	
-intermediates\
-	...
-
-evaluation\
-        overall_report.html
-        overall_report.pdf
-	pwm_from_input.png
-        k562_epoch_loss.png 
-	bias_metrics.json
-	bias_only_peaks.counts_pearsonr.png
-	bias_only_peaks.profile_jsd.png
-	bias_only_nonpeaks.counts_pearsonr.png
-	bias_only_nonpeaks.profile_jsd.png
-        bias_predictions.h5
-	bias_profile.pdf
-	bias_counts.pdf
-	...
-```
-Detailed usage guide with more information on the input arguments and output file formats and how to work with them are provided [here](https://github.com/kundajelab/chrombpnet/wiki/Bias-model-training) and [here](https://github.com/kundajelab/chrombpnet/wiki/Output-format).
-
-For more information, also see:
-
-- [Full documentation list](https://github.com/kundajelab/chrombpnet/wiki)
-- [Detailed list of input arguments](https://github.com/kundajelab/chrombpnet/wiki/Bias-model-training)
-- [Detailed usage guide with more information on the output file formats and how to work with them](https://github.com/kundajelab/chrombpnet/wiki/Output-format)
-- [Best practices for preprocessing](https://github.com/kundajelab/chrombpnet/wiki/Preprocessing)
-- [Training tutorial](https://github.com/kundajelab/chrombpnet/wiki/Tutorial)
-- [Frequently Asked Questions, FAQ](https://github.com/kundajelab/chrombpnet/wiki/FAQ)
- 
 ## How to Cite
 
 If you're using ChromBPNet in your work, please cite as follows:
