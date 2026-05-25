@@ -4,7 +4,7 @@
 
 ## Installation
 
-This section will discuss the packages needed to train a ChromBPNet model. Firstly, it is recommended that you use a GPU for model training and have the necessary NVIDIA drivers and CUDA already installed. Secondly, on newer hardware (i.e. H200, RTX5000 ada, or newer), CUDA >= v12.0 and corresponding cuDNN is required to run the necessary **Tensorflow** version of **2.21.0**. I have confirmed that CUDA v12.xx and cuDNN v9.xx allows for GPU accelerated training. 
+This section will discuss the packages needed to train a ChromBPNet model. Firstly, it is recommended that you use a GPU for model training and have the necessary NVIDIA drivers and CUDA already installed. Secondly, on newer hardware (i.e. H200, RTX5000 ada, or newer), CUDA >= v12.0 and corresponding cuDNN is required to run the necessary **Tensorflow** version of **2.21.0**. I have confirmed that CUDA v12.8.0 and cuDNN v9.10.1.4 allows for GPU accelerated training. 
 
 ### 1. Clone the current repo
 ```
