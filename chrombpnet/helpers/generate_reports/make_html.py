@@ -374,35 +374,43 @@ def main(args):
 	with open(os.path.join(prefix,"evaluation/{}overall_report.html".format(fpx)), 'w') as f:
 		f.write(main_html)
 
-	from weasyprint import HTML, CSS
-	css = CSS(string='''
-		@page {
-                size: 450mm 700mm;
-                mnargin: 0in 0in 0in 0in;
-                }
-        .center {
-                 max-width:25%;
-                 max-height:5%;
-                 display: block;
-                 margin-left: auto;
-                 margin-right: auto;
-                 }
-        .cover {
-    		 width: 100%;
-   			 display: block;
-			}
-			
-		table {
-  			   font-size: 11pt;
- 			   font-family: Arial;
- 			   text-align: center;
- 		       width: 100%;
- 		       border-collapse: collapse;
- 			   border: 1px solid silver;
-			}
-			
-        ''')
-	HTML(os.path.join(prefix,"evaluation/{}overall_report.html".format(fpx))).write_pdf(os.path.join(prefix,"evaluation/{}overall_report.pdf".format(fpx)), stylesheets=[css])
+	try:
+		from weasyprint import HTML, CSS
+		css = CSS(string='''
+			@page {
+					size: 450mm 700mm;
+					mnargin: 0in 0in 0in 0in;
+					}
+			.center {
+					max-width:25%;
+					max-height:5%;
+					display: block;
+					margin-left: auto;
+					margin-right: auto;
+					}
+			.cover {
+				 width: 100%;
+				 display: block;
+				}
+				
+			table {
+				   font-size: 11pt;
+				   font-family: Arial;
+				   text-align: center;
+				   width: 100%;
+				   border-collapse: collapse;
+				   border: 1px solid silver;
+				}
+				
+			''')
+		HTML(os.path.join(prefix,"evaluation/{}overall_report.html".format(fpx))).write_pdf(os.path.join(prefix,"evaluation/{}overall_report.pdf".format(fpx)), stylesheets=[css])
+	except Exception as e:
+		print("*" * 80)
+		print(f"Warning: HTML to PDF conversion for overall report failed with error:\n  {e}")
+		print("This is a known compatibility issue with WeasyPrint/Pango in some headless or HPC cluster environments.")
+		print("The overall HTML report remains fully accessible and functional at:")
+		print(f"  {os.path.join(prefix, 'evaluation/{}overall_report.html'.format(fpx))}")
+		print("*" * 80)
 
 	with open(os.path.join(prefix,"evaluation/{}overall_report.html".format(fpx)), 'w') as f:
 		f.write(main_html.replace("./",args.html_prefix))

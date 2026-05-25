@@ -1,4 +1,4 @@
-# Bias factorized, base-resolution deep learning models of chromatin accessibility reveal cis-regulatory sequence syntax, transcription factor footprints and regulatory variants
+# ChromBPNet compatability upgrade and performance optimizations
 
 - Wiki with detailed step-by step instructions: https://github.com/kundajelab/chrombpnet/wiki 
 
@@ -21,7 +21,7 @@ conda activate chrombpnet-h100-env
 
 Install non-Python requirements via conda
 ```
-conda install -y -c conda-forge -c bioconda samtools bedtools ucsc-bedgraphtobigwig pybigwig meme
+conda install -y -c conda-forge -c bioconda samtools bedtools ucsc-bedgraphtobigwig pybigwig meme pango
 ```
 ### 3. Install ChromBPNet 
 

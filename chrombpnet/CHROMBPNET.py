@@ -25,31 +25,31 @@ def main():
 	args = parsers.read_parser()
 	
 	if args.cmd == "pipeline" or args.cmd == "train":
-		os.makedirs(os.path.join(args.output_dir,"logs"), exist_ok=False)
-		os.makedirs(os.path.join(args.output_dir,"auxiliary"), exist_ok=False)
-		os.makedirs(os.path.join(args.output_dir,"models"), exist_ok=False)
-		os.makedirs(os.path.join(args.output_dir,"evaluation"), exist_ok=False)
+		os.makedirs(os.path.join(args.output_dir,"logs"), exist_ok=True)
+		os.makedirs(os.path.join(args.output_dir,"auxiliary"), exist_ok=True)
+		os.makedirs(os.path.join(args.output_dir,"models"), exist_ok=True)
+		os.makedirs(os.path.join(args.output_dir,"evaluation"), exist_ok=True)
 
 		pipelines.chrombpnet_train_pipeline(args)
 	
 	elif args.cmd == "qc":
-		os.makedirs(os.path.join(args.output_dir,"auxiliary"), exist_ok=False)
-		os.makedirs(os.path.join(args.output_dir,"evaluation"), exist_ok=False)
+		os.makedirs(os.path.join(args.output_dir,"auxiliary"), exist_ok=True)
+		os.makedirs(os.path.join(args.output_dir,"evaluation"), exist_ok=True)
 		
 		pipelines.chrombpnet_qc(args)
 		
 	elif args.cmd == "bias":
 		if args.cmd_bias == "pipeline" or args.cmd_bias == "train":
-			os.makedirs(os.path.join(args.output_dir,"logs"), exist_ok=False)
-			os.makedirs(os.path.join(args.output_dir,"auxiliary"), exist_ok=False)
-			os.makedirs(os.path.join(args.output_dir,"models"), exist_ok=False)
-			os.makedirs(os.path.join(args.output_dir,"evaluation"), exist_ok=False)
+			os.makedirs(os.path.join(args.output_dir,"logs"), exist_ok=True)
+			os.makedirs(os.path.join(args.output_dir,"auxiliary"), exist_ok=True)
+			os.makedirs(os.path.join(args.output_dir,"models"), exist_ok=True)
+			os.makedirs(os.path.join(args.output_dir,"evaluation"), exist_ok=True)
 
 			pipelines.train_bias_pipeline(args)
 		
 		elif args.cmd_bias == "qc":
-			os.makedirs(os.path.join(args.output_dir,"auxiliary"), exist_ok=False)
-			os.makedirs(os.path.join(args.output_dir,"evaluation"), exist_ok=False)
+			os.makedirs(os.path.join(args.output_dir,"auxiliary"), exist_ok=True)
+			os.makedirs(os.path.join(args.output_dir,"evaluation"), exist_ok=True)
 			
 			pipelines.bias_model_qc(args)
 			
@@ -114,7 +114,7 @@ def main():
 
 			assert(args.inputlen%2==0) # input length should be a multiple of 2
 	
-			os.makedirs(args.output_prefix+"_auxiliary/", exist_ok=False)
+			os.makedirs(args.output_prefix+"_auxiliary/", exist_ok=True)
 	
 			from chrombpnet.helpers.make_gc_matched_negatives.get_genomewide_gc_buckets.get_genomewide_gc_bins import get_genomewide_gc
 			get_genomewide_gc(args.genome,args.output_prefix+"_auxiliary/genomewide_gc.bed",args.inputlen, args.stride)
