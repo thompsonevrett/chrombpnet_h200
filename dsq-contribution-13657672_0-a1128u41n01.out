@@ -1,0 +1,266 @@
+
+The following have been reloaded with a version change:
+  1) CUDA/12.9.1 => CUDA/12.8.0
+
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+I0000 00:00:1780417948.224069 2677777 port.cc:153] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+I0000 00:00:1780417948.367164 2677777 cpu_feature_guard.cc:227] This TensorFlow binary is optimized to use available CPU instructions in performance-critical operations.
+To enable the following instructions: AVX2 AVX512F AVX512_VNNI AVX512_BF16 AVX512_FP16 AVX_VNNI AMX_TILE AMX_INT8 AMX_BF16 FMA, in other operations, rebuild TensorFlow with the appropriate compiler flags.
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+I0000 00:00:1780417953.210090 2677777 port.cc:153] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+I0000 00:00:1780417959.933797 2677777 gpu_device.cc:2043] Created device /job:localhost/replica:0/task:0/device:GPU:0 with 30387 MB memory:  -> device: 0, name: NVIDIA RTX 5000 Ada Generation, pci bus id: 0000:3d:00.0, compute capability: 8.9
+I0000 00:00:1780417959.940903 2677777 mlir_graph_optimization_pass.cc:437] MLIR V1 optimization pass is not enabled
+W0000 00:00:1780417960.091268 2677777 c_api.cc:305] Operation '{name:'wo_bias_bpnet_logcount_predictions/kernel/Assign' id:440 op device:{requested: '', assigned: ''} def:{{{node wo_bias_bpnet_logcount_predictions/kernel/Assign}} = AssignVariableOp[_has_manual_control_dependencies=true, dtype=DT_FLOAT, validate_shape=false](wo_bias_bpnet_logcount_predictions/kernel, wo_bias_bpnet_logcount_predictions/kernel/Initializer/stateless_random_uniform)}}' was changed by setting attribute after it was run by a session. This mutation will have no effect, and will trigger an error in the future. Either don't modify nodes after running them or create a new session.
+got the model
+Model: "model_1"
+__________________________________________________________________________________________________
+ Layer (type)                Output Shape                 Param #   Connected to                  
+==================================================================================================
+ sequence (InputLayer)       [(None, 2114, 4)]            0         []                            
+                                                                                                  
+ wo_bias_bpnet_1st_conv (Co  (None, 2094, 512)            43520     ['sequence[0][0]']            
+ nv1D)                                                                                            
+                                                                                                  
+ wo_bias_bpnet_1conv (Conv1  (None, 2090, 512)            786944    ['wo_bias_bpnet_1st_conv[0][0]
+ D)                                                                 ']                            
+                                                                                                  
+ wo_bias_bpnet_1crop (Cropp  (None, 2090, 512)            0         ['wo_bias_bpnet_1st_conv[0][0]
+ ing1D)                                                             ']                            
+                                                                                                  
+ add (Add)                   (None, 2090, 512)            0         ['wo_bias_bpnet_1conv[0][0]', 
+                                                                     'wo_bias_bpnet_1crop[0][0]'] 
+                                                                                                  
+ wo_bias_bpnet_2conv (Conv1  (None, 2082, 512)            786944    ['add[0][0]']                 
+ D)                                                                                               
+                                                                                                  
+ wo_bias_bpnet_2crop (Cropp  (None, 2082, 512)            0         ['add[0][0]']                 
+ ing1D)                                                                                           
+                                                                                                  
+ add_1 (Add)                 (None, 2082, 512)            0         ['wo_bias_bpnet_2conv[0][0]', 
+                                                                     'wo_bias_bpnet_2crop[0][0]'] 
+                                                                                                  
+ wo_bias_bpnet_3conv (Conv1  (None, 2066, 512)            786944    ['add_1[0][0]']               
+ D)                                                                                               
+                                                                                                  
+ wo_bias_bpnet_3crop (Cropp  (None, 2066, 512)            0         ['add_1[0][0]']               
+ ing1D)                                                                                           
+                                                                                                  
+ add_2 (Add)                 (None, 2066, 512)            0         ['wo_bias_bpnet_3conv[0][0]', 
+                                                                     'wo_bias_bpnet_3crop[0][0]'] 
+                                                                                                  
+ wo_bias_bpnet_4conv (Conv1  (None, 2034, 512)            786944    ['add_2[0][0]']               
+ D)                                                                                               
+                                                                                                  
+ wo_bias_bpnet_4crop (Cropp  (None, 2034, 512)            0         ['add_2[0][0]']               
+ ing1D)                                                                                           
+                                                                                                  
+ add_3 (Add)                 (None, 2034, 512)            0         ['wo_bias_bpnet_4conv[0][0]', 
+                                                                     'wo_bias_bpnet_4crop[0][0]'] 
+                                                                                                  
+ wo_bias_bpnet_5conv (Conv1  (None, 1970, 512)            786944    ['add_3[0][0]']               
+ D)                                                                                               
+                                                                                                  
+ wo_bias_bpnet_5crop (Cropp  (None, 1970, 512)            0         ['add_3[0][0]']               
+ ing1D)                                                                                           
+                                                                                                  
+ add_4 (Add)                 (None, 1970, 512)            0         ['wo_bias_bpnet_5conv[0][0]', 
+                                                                     'wo_bias_bpnet_5crop[0][0]'] 
+                                                                                                  
+ wo_bias_bpnet_6conv (Conv1  (None, 1842, 512)            786944    ['add_4[0][0]']               
+ D)                                                                                               
+                                                                                                  
+ wo_bias_bpnet_6crop (Cropp  (None, 1842, 512)            0         ['add_4[0][0]']               
+ ing1D)                                                                                           
+                                                                                                  
+ add_5 (Add)                 (None, 1842, 512)            0         ['wo_bias_bpnet_6conv[0][0]', 
+                                                                     'wo_bias_bpnet_6crop[0][0]'] 
+                                                                                                  
+ wo_bias_bpnet_7conv (Conv1  (None, 1586, 512)            786944    ['add_5[0][0]']               
+ D)                                                                                               
+                                                                                                  
+ wo_bias_bpnet_7crop (Cropp  (None, 1586, 512)            0         ['add_5[0][0]']               
+ ing1D)                                                                                           
+                                                                                                  
+ add_6 (Add)                 (None, 1586, 512)            0         ['wo_bias_bpnet_7conv[0][0]', 
+                                                                     'wo_bias_bpnet_7crop[0][0]'] 
+                                                                                                  
+ wo_bias_bpnet_8conv (Conv1  (None, 1074, 512)            786944    ['add_6[0][0]']               
+ D)                                                                                               
+                                                                                                  
+ wo_bias_bpnet_8crop (Cropp  (None, 1074, 512)            0         ['add_6[0][0]']               
+ ing1D)                                                                                           
+                                                                                                  
+ add_7 (Add)                 (None, 1074, 512)            0         ['wo_bias_bpnet_8conv[0][0]', 
+                                                                     'wo_bias_bpnet_8crop[0][0]'] 
+                                                                                                  
+ wo_bias_bpnet_prof_out_pre  (None, 1000, 1)              38401     ['add_7[0][0]']               
+ crop (Conv1D)                                                                                    
+                                                                                                  
+ wo_bias_bpnet_logitt_befor  (None, 1000, 1)              0         ['wo_bias_bpnet_prof_out_precr
+ e_flatten (Cropping1D)                                             op[0][0]']                    
+                                                                                                  
+ gap (GlobalAveragePooling1  (None, 512)                  0         ['add_7[0][0]']               
+ D)                                                                                               
+                                                                                                  
+ wo_bias_bpnet_logits_profi  (None, 1000)                 0         ['wo_bias_bpnet_logitt_before_
+ le_predictions (Flatten)                                           flatten[0][0]']               
+                                                                                                  
+ wo_bias_bpnet_logcount_pre  (None, 1)                    513       ['gap[0][0]']                 
+ dictions (Dense)                                                                                 
+                                                                                                  
+==================================================================================================
+Total params: 6377986 (24.33 MB)
+Trainable params: 6377986 (24.33 MB)
+Non-trainable params: 0 (0.00 Byte)
+__________________________________________________________________________________________________
+I0000 00:00:1780417985.224150 2677777 gpu_device.cc:2043] Created device /job:localhost/replica:0/task:0/device:GPU:0 with 30387 MB memory:  -> device: 0, name: NVIDIA RTX 5000 Ada Generation, pci bus id: 0000:3d:00.0, compute capability: 8.9
+inferred model inputlen:  2114
+Seqs dimension : (174595, 2114, 4)
+Warning:  AddV2 used in model but handling of op is not specified by shap; will use original  gradients
+Warning:  AddV2 used in model but handling of op is not specified by shap; will use original  gradients
+Warning:  AddV2 used in model but handling of op is not specified by shap; will use original  gradients
+Warning:  AddV2 used in model but handling of op is not specified by shap; will use original  gradients
+Warning:  AddV2 used in model but handling of op is not specified by shap; will use original  gradients
+Warning:  AddV2 used in model but handling of op is not specified by shap; will use original  gradients
+Warning:  AddV2 used in model but handling of op is not specified by shap; will use original  gradients
+Warning:  AddV2 used in model but handling of op is not specified by shap; will use original  gradients
+Warning:  SpaceToBatchND used in model but handling of op is not specified by shap; will use original  gradients
+Warning:  BatchToSpaceND used in model but handling of op is not specified by shap; will use original  gradients
+Warning:  SpaceToBatchND used in model but handling of op is not specified by shap; will use original  gradients
+Warning:  BatchToSpaceND used in model but handling of op is not specified by shap; will use original  gradients
+Warning:  SpaceToBatchND used in model but handling of op is not specified by shap; will use original  gradients
+Warning:  BatchToSpaceND used in model but handling of op is not specified by shap; will use original  gradients
+Warning:  SpaceToBatchND used in model but handling of op is not specified by shap; will use original  gradients
+Warning:  BatchToSpaceND used in model but handling of op is not specified by shap; will use original  gradients
+Warning:  SpaceToBatchND used in model but handling of op is not specified by shap; will use original  gradients
+Warning:  BatchToSpaceND used in model but handling of op is not specified by shap; will use original  gradients
+Warning:  SpaceToBatchND used in model but handling of op is not specified by shap; will use original  gradients
+Warning:  BatchToSpaceND used in model but handling of op is not specified by shap; will use original  gradients
+Warning:  SpaceToBatchND used in model but handling of op is not specified by shap; will use original  gradients
+Warning:  BatchToSpaceND used in model but handling of op is not specified by shap; will use original  gradients
+Warning:  SpaceToBatchND used in model but handling of op is not specified by shap; will use original  gradients
+Warning:  BatchToSpaceND used in model but handling of op is not specified by shap; will use original  gradients
+Generating 'counts' shap scores
+Done 0 examples of 174595
+W0000 00:00:1780417985.473321 2677830 local_rendezvous.cc:412] Local rendezvous is aborting with status: FAILED_PRECONDITION: Could not find variable wo_bias_bpnet_1st_conv/bias. This could mean that the variable has been deleted. In TF1, it can also mean the variable is uninitialized. Debug info: container=localhost, status error message=Container localhost does not exist. (Could not find resource: localhost/wo_bias_bpnet_1st_conv/bias)
+	 [[{{node wo_bias_bpnet_1st_conv/BiasAdd/ReadVariableOp}}]]
+W0000 00:00:1780417985.473342 2677830 local_rendezvous.cc:412] Local rendezvous is aborting with status: FAILED_PRECONDITION: Could not find variable wo_bias_bpnet_1st_conv/bias. This could mean that the variable has been deleted. In TF1, it can also mean the variable is uninitialized. Debug info: container=localhost, status error message=Container localhost does not exist. (Could not find resource: localhost/wo_bias_bpnet_1st_conv/bias)
+	 [[{{node wo_bias_bpnet_1st_conv/BiasAdd/ReadVariableOp}}]]
+	 [[gradients/wo_bias_bpnet_1st_conv/Conv1D/ExpandDims_grad/Reshape/_17]]
+I0000 00:00:1780417985.473350 2677830 local_rendezvous.cc:432] Local rendezvous recv item cancelled. Key hash: 12630847349155649477
+Traceback (most recent call last):
+  File "/home/ent9/.conda/envs/chrombpnet-h100-env/lib/python3.10/site-packages/tensorflow/python/client/session.py", line 1407, in _do_call
+    return fn(*args)
+  File "/home/ent9/.conda/envs/chrombpnet-h100-env/lib/python3.10/site-packages/tensorflow/python/client/session.py", line 1390, in _run_fn
+    return self._call_tf_sessionrun(options, feed_dict, fetch_list,
+  File "/home/ent9/.conda/envs/chrombpnet-h100-env/lib/python3.10/site-packages/tensorflow/python/client/session.py", line 1483, in _call_tf_sessionrun
+    return tf_session.TF_SessionRun_wrapper(self._session, options, feed_dict,
+tensorflow.python.framework.errors_impl.FailedPreconditionError: 2 root error(s) found.
+  (0) FAILED_PRECONDITION: Could not find variable wo_bias_bpnet_1st_conv/bias. This could mean that the variable has been deleted. In TF1, it can also mean the variable is uninitialized. Debug info: container=localhost, status error message=Container localhost does not exist. (Could not find resource: localhost/wo_bias_bpnet_1st_conv/bias)
+	 [[{{node wo_bias_bpnet_1st_conv/BiasAdd/ReadVariableOp}}]]
+	 [[gradients/wo_bias_bpnet_1st_conv/Conv1D/ExpandDims_grad/Reshape/_17]]
+  (1) FAILED_PRECONDITION: Could not find variable wo_bias_bpnet_1st_conv/bias. This could mean that the variable has been deleted. In TF1, it can also mean the variable is uninitialized. Debug info: container=localhost, status error message=Container localhost does not exist. (Could not find resource: localhost/wo_bias_bpnet_1st_conv/bias)
+	 [[{{node wo_bias_bpnet_1st_conv/BiasAdd/ReadVariableOp}}]]
+0 successful operations.
+0 derived errors ignored.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/ent9/.conda/envs/chrombpnet-h100-env/bin/chrombpnet", line 6, in <module>
+    sys.exit(main())
+  File "/nfs/roberts/scratch/pi_dk59/ent9/ChromBPNet-TensorUpdate/chrombpnet/CHROMBPNET.py", line 71, in main
+    interpret.main(args)
+  File "/nfs/roberts/scratch/pi_dk59/ent9/ChromBPNet-TensorUpdate/chrombpnet/evaluation/interpret/interpret.py", line 191, in main
+    interpret(model, seqs, args.output_prefix, args.profile_or_counts)
+  File "/nfs/roberts/scratch/pi_dk59/ent9/ChromBPNet-TensorUpdate/chrombpnet/evaluation/interpret/interpret.py", line 127, in interpret
+    counts_shap_scores = profile_model_counts_explainer.shap_values(
+  File "/home/ent9/.conda/envs/chrombpnet-h100-env/lib/python3.10/site-packages/shap/explainers/deep/deep_tf.py", line 294, in shap_values
+    sample_phis = self.run(self.phi_symbolic(feature_ind), self.model_inputs, joint_input)
+  File "/home/ent9/.conda/envs/chrombpnet-h100-env/lib/python3.10/site-packages/shap/explainers/deep/deep_tf.py", line 322, in run
+    return self.session.run(out, feed_dict)
+  File "/home/ent9/.conda/envs/chrombpnet-h100-env/lib/python3.10/site-packages/tensorflow/python/client/session.py", line 977, in run
+    result = self._run(None, fetches, feed_dict, options_ptr,
+  File "/home/ent9/.conda/envs/chrombpnet-h100-env/lib/python3.10/site-packages/tensorflow/python/client/session.py", line 1220, in _run
+    results = self._do_run(handle, final_targets, final_fetches,
+  File "/home/ent9/.conda/envs/chrombpnet-h100-env/lib/python3.10/site-packages/tensorflow/python/client/session.py", line 1400, in _do_run
+    return self._do_call(_run_fn, feeds, fetches, targets, options,
+  File "/home/ent9/.conda/envs/chrombpnet-h100-env/lib/python3.10/site-packages/tensorflow/python/client/session.py", line 1426, in _do_call
+    raise type(e)(node_def, op, message)  # pylint: disable=no-value-for-parameter
+tensorflow.python.framework.errors_impl.FailedPreconditionError: Graph execution error:
+
+Detected at node 'wo_bias_bpnet_1st_conv/BiasAdd/ReadVariableOp' defined at (most recent call last):
+    File "/home/ent9/.conda/envs/chrombpnet-h100-env/bin/chrombpnet", line 6, in <module>
+    File "/nfs/roberts/scratch/pi_dk59/ent9/ChromBPNet-TensorUpdate/chrombpnet/CHROMBPNET.py", line 71, in main
+    File "/nfs/roberts/scratch/pi_dk59/ent9/ChromBPNet-TensorUpdate/chrombpnet/evaluation/interpret/interpret.py", line 175, in main
+    File "/nfs/roberts/scratch/pi_dk59/ent9/ChromBPNet-TensorUpdate/chrombpnet/evaluation/interpret/input_utils.py", line 33, in load_model_wrapper
+    File "/home/ent9/.conda/envs/chrombpnet-h100-env/lib/python3.10/site-packages/tf_keras/src/saving/saving_api.py", line 301, in load_model
+    File "/home/ent9/.conda/envs/chrombpnet-h100-env/lib/python3.10/site-packages/tf_keras/src/utils/traceback_utils.py", line 65, in error_handler
+    File "/home/ent9/.conda/envs/chrombpnet-h100-env/lib/python3.10/site-packages/tf_keras/src/saving/legacy/save.py", line 248, in load_model
+    File "/home/ent9/.conda/envs/chrombpnet-h100-env/lib/python3.10/site-packages/tf_keras/src/saving/legacy/hdf5_format.py", line 203, in load_model_from_hdf5
+    File "/home/ent9/.conda/envs/chrombpnet-h100-env/lib/python3.10/site-packages/tf_keras/src/saving/legacy/model_config.py", line 66, in model_from_config
+    File "/home/ent9/.conda/envs/chrombpnet-h100-env/lib/python3.10/site-packages/tf_keras/src/saving/legacy/serialization.py", line 498, in deserialize_keras_object
+    File "/home/ent9/.conda/envs/chrombpnet-h100-env/lib/python3.10/site-packages/tf_keras/src/engine/training.py", line 3325, in from_config
+    File "/home/ent9/.conda/envs/chrombpnet-h100-env/lib/python3.10/site-packages/tf_keras/src/engine/functional.py", line 1525, in reconstruct_from_config
+    File "/home/ent9/.conda/envs/chrombpnet-h100-env/lib/python3.10/site-packages/tf_keras/src/engine/functional.py", line 1465, in process_node
+    File "/home/ent9/.conda/envs/chrombpnet-h100-env/lib/python3.10/site-packages/tf_keras/src/engine/base_layer_v1.py", line 853, in __call__
+    File "/home/ent9/.conda/envs/chrombpnet-h100-env/lib/python3.10/site-packages/tf_keras/src/layers/convolutional/base_conv.py", line 310, in call
+Node: 'wo_bias_bpnet_1st_conv/BiasAdd/ReadVariableOp'
+Detected at node 'wo_bias_bpnet_1st_conv/BiasAdd/ReadVariableOp' defined at (most recent call last):
+    File "/home/ent9/.conda/envs/chrombpnet-h100-env/bin/chrombpnet", line 6, in <module>
+    File "/nfs/roberts/scratch/pi_dk59/ent9/ChromBPNet-TensorUpdate/chrombpnet/CHROMBPNET.py", line 71, in main
+    File "/nfs/roberts/scratch/pi_dk59/ent9/ChromBPNet-TensorUpdate/chrombpnet/evaluation/interpret/interpret.py", line 175, in main
+    File "/nfs/roberts/scratch/pi_dk59/ent9/ChromBPNet-TensorUpdate/chrombpnet/evaluation/interpret/input_utils.py", line 33, in load_model_wrapper
+    File "/home/ent9/.conda/envs/chrombpnet-h100-env/lib/python3.10/site-packages/tf_keras/src/saving/saving_api.py", line 301, in load_model
+    File "/home/ent9/.conda/envs/chrombpnet-h100-env/lib/python3.10/site-packages/tf_keras/src/utils/traceback_utils.py", line 65, in error_handler
+    File "/home/ent9/.conda/envs/chrombpnet-h100-env/lib/python3.10/site-packages/tf_keras/src/saving/legacy/save.py", line 248, in load_model
+    File "/home/ent9/.conda/envs/chrombpnet-h100-env/lib/python3.10/site-packages/tf_keras/src/saving/legacy/hdf5_format.py", line 203, in load_model_from_hdf5
+    File "/home/ent9/.conda/envs/chrombpnet-h100-env/lib/python3.10/site-packages/tf_keras/src/saving/legacy/model_config.py", line 66, in model_from_config
+    File "/home/ent9/.conda/envs/chrombpnet-h100-env/lib/python3.10/site-packages/tf_keras/src/saving/legacy/serialization.py", line 498, in deserialize_keras_object
+    File "/home/ent9/.conda/envs/chrombpnet-h100-env/lib/python3.10/site-packages/tf_keras/src/engine/training.py", line 3325, in from_config
+    File "/home/ent9/.conda/envs/chrombpnet-h100-env/lib/python3.10/site-packages/tf_keras/src/engine/functional.py", line 1525, in reconstruct_from_config
+    File "/home/ent9/.conda/envs/chrombpnet-h100-env/lib/python3.10/site-packages/tf_keras/src/engine/functional.py", line 1465, in process_node
+    File "/home/ent9/.conda/envs/chrombpnet-h100-env/lib/python3.10/site-packages/tf_keras/src/engine/base_layer_v1.py", line 853, in __call__
+    File "/home/ent9/.conda/envs/chrombpnet-h100-env/lib/python3.10/site-packages/tf_keras/src/layers/convolutional/base_conv.py", line 310, in call
+Node: 'wo_bias_bpnet_1st_conv/BiasAdd/ReadVariableOp'
+2 root error(s) found.
+  (0) FAILED_PRECONDITION: Could not find variable wo_bias_bpnet_1st_conv/bias. This could mean that the variable has been deleted. In TF1, it can also mean the variable is uninitialized. Debug info: container=localhost, status error message=Container localhost does not exist. (Could not find resource: localhost/wo_bias_bpnet_1st_conv/bias)
+	 [[{{node wo_bias_bpnet_1st_conv/BiasAdd/ReadVariableOp}}]]
+	 [[gradients/wo_bias_bpnet_1st_conv/Conv1D/ExpandDims_grad/Reshape/_17]]
+  (1) FAILED_PRECONDITION: Could not find variable wo_bias_bpnet_1st_conv/bias. This could mean that the variable has been deleted. In TF1, it can also mean the variable is uninitialized. Debug info: container=localhost, status error message=Container localhost does not exist. (Could not find resource: localhost/wo_bias_bpnet_1st_conv/bias)
+	 [[{{node wo_bias_bpnet_1st_conv/BiasAdd/ReadVariableOp}}]]
+0 successful operations.
+0 derived errors ignored.
+
+Original stack trace for 'wo_bias_bpnet_1st_conv/BiasAdd/ReadVariableOp':
+  File "/home/ent9/.conda/envs/chrombpnet-h100-env/bin/chrombpnet", line 6, in <module>
+  File "/nfs/roberts/scratch/pi_dk59/ent9/ChromBPNet-TensorUpdate/chrombpnet/CHROMBPNET.py", line 71, in main
+  File "/nfs/roberts/scratch/pi_dk59/ent9/ChromBPNet-TensorUpdate/chrombpnet/evaluation/interpret/interpret.py", line 175, in main
+  File "/nfs/roberts/scratch/pi_dk59/ent9/ChromBPNet-TensorUpdate/chrombpnet/evaluation/interpret/input_utils.py", line 33, in load_model_wrapper
+  File "/home/ent9/.conda/envs/chrombpnet-h100-env/lib/python3.10/site-packages/tf_keras/src/saving/saving_api.py", line 301, in load_model
+  File "/home/ent9/.conda/envs/chrombpnet-h100-env/lib/python3.10/site-packages/tf_keras/src/utils/traceback_utils.py", line 65, in error_handler
+  File "/home/ent9/.conda/envs/chrombpnet-h100-env/lib/python3.10/site-packages/tf_keras/src/saving/legacy/save.py", line 248, in load_model
+  File "/home/ent9/.conda/envs/chrombpnet-h100-env/lib/python3.10/site-packages/tf_keras/src/saving/legacy/hdf5_format.py", line 203, in load_model_from_hdf5
+  File "/home/ent9/.conda/envs/chrombpnet-h100-env/lib/python3.10/site-packages/tf_keras/src/saving/legacy/model_config.py", line 66, in model_from_config
+  File "/home/ent9/.conda/envs/chrombpnet-h100-env/lib/python3.10/site-packages/tf_keras/src/saving/legacy/serialization.py", line 498, in deserialize_keras_object
+  File "/home/ent9/.conda/envs/chrombpnet-h100-env/lib/python3.10/site-packages/tf_keras/src/engine/training.py", line 3325, in from_config
+  File "/home/ent9/.conda/envs/chrombpnet-h100-env/lib/python3.10/site-packages/tf_keras/src/engine/functional.py", line 1525, in reconstruct_from_config
+  File "/home/ent9/.conda/envs/chrombpnet-h100-env/lib/python3.10/site-packages/tf_keras/src/engine/functional.py", line 1465, in process_node
+  File "/home/ent9/.conda/envs/chrombpnet-h100-env/lib/python3.10/site-packages/tf_keras/src/engine/base_layer_v1.py", line 853, in __call__
+  File "/home/ent9/.conda/envs/chrombpnet-h100-env/lib/python3.10/site-packages/tf_keras/src/layers/convolutional/base_conv.py", line 310, in call
+  File "/home/ent9/.conda/envs/chrombpnet-h100-env/lib/python3.10/site-packages/tensorflow/python/util/traceback_utils.py", line 164, in error_handler
+  File "/home/ent9/.conda/envs/chrombpnet-h100-env/lib/python3.10/site-packages/tensorflow/python/util/dispatch.py", line 1264, in op_dispatch_handler
+  File "/home/ent9/.conda/envs/chrombpnet-h100-env/lib/python3.10/site-packages/tensorflow/python/ops/nn_ops.py", line 3558, in bias_add
+  File "/home/ent9/.conda/envs/chrombpnet-h100-env/lib/python3.10/site-packages/tensorflow/python/profiler/trace.py", line 183, in wrapped
+  File "/home/ent9/.conda/envs/chrombpnet-h100-env/lib/python3.10/site-packages/tensorflow/python/framework/ops.py", line 757, in convert_to_tensor
+  File "/home/ent9/.conda/envs/chrombpnet-h100-env/lib/python3.10/site-packages/tensorflow/python/framework/tensor_conversion_registry.py", line 234, in convert
+  File "/home/ent9/.conda/envs/chrombpnet-h100-env/lib/python3.10/site-packages/tensorflow/python/ops/resource_variable_ops.py", line 2378, in _dense_var_to_tensor
+  File "/home/ent9/.conda/envs/chrombpnet-h100-env/lib/python3.10/site-packages/tensorflow/python/ops/resource_variable_ops.py", line 1624, in _dense_var_to_tensor
+  File "/home/ent9/.conda/envs/chrombpnet-h100-env/lib/python3.10/site-packages/tensorflow/python/ops/resource_variable_ops.py", line 658, in value
+  File "/home/ent9/.conda/envs/chrombpnet-h100-env/lib/python3.10/site-packages/tensorflow/python/ops/resource_variable_ops.py", line 843, in _read_variable_op
+  File "/home/ent9/.conda/envs/chrombpnet-h100-env/lib/python3.10/site-packages/tensorflow/python/ops/resource_variable_ops.py", line 833, in read_and_set_handle
+  File "/home/ent9/.conda/envs/chrombpnet-h100-env/lib/python3.10/site-packages/tensorflow/python/ops/gen_resource_variable_ops.py", line 548, in read_variable_op
+  File "/home/ent9/.conda/envs/chrombpnet-h100-env/lib/python3.10/site-packages/tensorflow/python/framework/op_def_library.py", line 796, in _apply_op_helper
+  File "/home/ent9/.conda/envs/chrombpnet-h100-env/lib/python3.10/site-packages/tensorflow/python/framework/ops.py", line 2726, in _create_op_internal
+  File "/home/ent9/.conda/envs/chrombpnet-h100-env/lib/python3.10/site-packages/tensorflow/python/framework/ops.py", line 1221, in from_node_def
+

@@ -76,7 +76,7 @@ import chrombpnet.evaluation.interpret.input_utils as input_utils
 NARROWPEAK_SCHEMA = ["chr", "start", "end", "1", "2", "3", "4", "5", "6", "summit"]
 
 # disable eager execution so shap deep explainer wont break
-tf.compat.v1.disable_eager_execution()
+tf.compat.v1.disable_v2_behavior()
 
 def fetch_interpret_args():
     parser = argparse.ArgumentParser(description="get sequence contribution scores for the model")
