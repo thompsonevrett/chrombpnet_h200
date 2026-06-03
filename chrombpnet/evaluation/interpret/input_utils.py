@@ -31,6 +31,14 @@ def load_model_wrapper(args):
     custom_objects={"multinomial_nll": losses.multinomial_nll, "tf": tf}    
     get_custom_objects().update(custom_objects)    
     model=load_model(args.model_h5,compile=False)
+    
+    # Workaround for SHAP DeepExplainer uninitialized variables issue
+    weights = model.get_weights()
+    import tf_keras
+    sess = tf_keras.backend.get_session()
+    sess.run(tf.compat.v1.global_variables_initializer())
+    model.set_weights(weights)
+    
     print("got the model")
     model.summary()
     return model
